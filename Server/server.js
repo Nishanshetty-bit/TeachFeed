@@ -214,6 +214,7 @@ app.post('/teachers', async (req, res) => {
   }
 });
 
+
 app.delete('/teachers/:id', async (req, res) => {
   try {
     const [result] = await db.query("DELETE FROM Teacher WHERE id = ?", [req.params.id]);
@@ -273,68 +274,21 @@ app.get('/teachers/:id', async (req, res) => {
   }
 });
 
-// Staff Endpoints with enhanced security
-app.post('/staff/register', authLimiter, async (req, res) => {
-  const { staffId, name, email, password } = req.body;
-  
-  // Input validation
-  if (!staffId || !name || !email || !password) {
-    return res.status(400).json({ 
-      success: false, 
-      message: "All fields are required" 
-    });
-  }
 
-  if (!validateEmail(email)) {
-    return res.status(400).json({ 
-      success: false, 
-      message: "Invalid email format" 
-    });
-  }
+app.post('/staff/register',(req,res)=>{
+    const sql = "INSERT INTO staff(`name`, `email`, `password`) VALUES (?)";
+    const values = [
+     req.body.name,
+     req.body.email,
+     req.body.password
+    ] 
+    db.query(sql,[values], (err,result)=>{
+     if(err)
+         return res.json(err);
+     return res.json(result);
+ })
+ });
 
-  if (!validatePassword(password)) {
-    return res.status(400).json({ 
-      success: false, 
-      message: "Password must be at least 8 characters" 
-    });
-  }
-
-  try {
-    // Check if staff exists
-    const [existing] = await db.query(
-      "SELECT * FROM Staff WHERE email = ? OR staffId = ?", 
-      [email, staffId]
-    );
-    
-    if (existing.length > 0) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Staff with this email or ID already exists" 
-      });
-    }
-
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create staff
-    await db.query(
-      "INSERT INTO Staff (staffId, name, email, password) VALUES (?, ?, ?, ?)",
-      [staffId, name, email, hashedPassword]
-    );
-    
-    return res.json({ 
-      success: true, 
-      message: "Staff registered successfully" 
-    });
-  } catch (err) {
-    console.error("Registration error:", err);
-    return res.status(500).json({ 
-      success: false, 
-      message: "Internal server error" 
-    });
-  }
-});
 
 app.post('/staff', authLimiter, async (req, res) => {
   const { email, password } = req.body;

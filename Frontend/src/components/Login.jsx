@@ -56,7 +56,6 @@ const Login = () => {
 
     try {
       const response = await axios.post('http://localhost:8081/staff/register', {
-        staffId,
         name: fullName,
         email,
         password
@@ -122,7 +121,8 @@ const Login = () => {
   };
 
   return (
-    <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
+  <div className='flex items-center justify-center mt-18' >
+      <div className= "max-w-md w-full bg-white rounded-xl shadow-lg p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
         {isLogin ? 'Sign In' : 'Create Account'}
       </h2>
@@ -190,6 +190,7 @@ const Login = () => {
                 onChange={(e) => setFullName(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                 required
+
               />
             </div>
           </>
@@ -220,6 +221,7 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
             required
+            placeholder='Enter your email'
           />
         </div>
 
@@ -234,6 +236,7 @@ const Login = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
             required
             minLength="6"
+            placeholder='Enter'
           />
         </div>
 
@@ -289,6 +292,7 @@ const Login = () => {
         </button>
       </div>
     </div>
+  </div>
   );
 };
 
